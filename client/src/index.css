@@ -46,10 +46,11 @@ p{
 
 .search-container input {
     border: none;
-    width: 90%;
     height: 100%;
     border-radius: 10px;
-    outline: none;
+     width: 90%;
+  outline: none;
+
 }
 
 .search-container input::placeholder{
@@ -57,8 +58,8 @@ p{
 }
 
 .search-container button{
+    min-width: 80px;
     padding: 5px 3px 5px 3px;
-    min-width:10%;
     border: none;
     background-color: rgb(182, 172, 172);
      height: 100%;
