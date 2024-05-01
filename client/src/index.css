@@ -37,8 +37,8 @@ p{
 .search-container{
     display: flex;
     box-shadow: rgba(0,0,82,0.15) 0 2px 7px ;
-    width: 50vw;
-    height: 7vh;
+      min-width: 50vw;
+     height: 7vh;
     border: none;
   border-radius: 10px;
   
