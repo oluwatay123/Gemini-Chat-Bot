@@ -57,6 +57,7 @@ p{
 }
 
 .search-container button{
+    padding: 5px 3px 5px 3px;
     min-width:10%;
     border: none;
     background-color: rgb(182, 172, 172);
