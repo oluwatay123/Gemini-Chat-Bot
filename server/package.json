@@ -6,7 +6,7 @@
     "express": "^4.19.2"
   },
   "scripts": {
-    "start:backend": "nodemon server.js"
+    "start:backend": "nodemon index.js"
   },
   "name": "server",
   "version": "1.0.0",
