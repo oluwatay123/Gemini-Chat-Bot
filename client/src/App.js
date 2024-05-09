@@ -64,7 +64,9 @@ const App = () => {
       //loading while awaitind response 
       setLoading(true)
       // its use to recieve messages from the server
-      const response = await fetch("http://localhost:5000/gemini", options)
+
+
+      const response = await fetch("https://gemini-server-1kvg.onrender.com/gemini/send-response", options)
       const data = await response.text()
       console.log(data)
      // Format bot response
