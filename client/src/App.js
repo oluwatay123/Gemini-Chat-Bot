@@ -92,6 +92,12 @@ const App = () => {
     }
   }
 
+        const listenEnter = (e)=>{
+    if(e.key === "Enter") {
+      getResponse()
+    }
+  }
+
   return (
     <div className="app">
       <h1 className='app-title'>Geminiod</h1>
@@ -104,7 +110,7 @@ const App = () => {
 
 
         <div className='search-container'>
-          <input value={value} placeholder='What is todays weather?' onChange={e => setValue(e.target.value)}></input>
+          <input value={value} placeholder='What is todays weather?' onKeyDown={listenEnter}  onChange={e => setValue(e.target.value)}></input>
           {!error && <button className='search-button' onClick={getResponse}>Search</button>}
           {error && <button className='search-button' onClick={clear}>clear</button>
           }
