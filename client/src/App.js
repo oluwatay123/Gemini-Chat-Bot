@@ -71,7 +71,7 @@ const App = () => {
       console.log(data)
      // Format bot response
     
-     const formattedRes = data.split('.').join('. \n ');
+      const formattedRes = data.split('\\n').map((part) => <p key={part}>{part}</p>); // Map each part to a <p> element
      setChatHistory(oldChatHsitory =>
         [...oldChatHsitory, {
           role: "user",
