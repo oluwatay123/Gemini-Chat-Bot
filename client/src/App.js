@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 const App = () => {
   const [error, setError] = useState(null)
   const [value, setValue] = useState("")
