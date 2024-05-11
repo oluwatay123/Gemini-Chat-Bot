@@ -1,10 +1,10 @@
 *{
  font-family:sans-serif ;
+  border: none ;
 
 }
 
 .app{
-    border: none !important;
     display: flex;
     flex-direction: column;
     align-items: center;
