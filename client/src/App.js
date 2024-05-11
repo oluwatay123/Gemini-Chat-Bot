@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'react-quill/dist/quill.snow.css';
 const App = () => {
   const [error, setError] = useState(null)
   const [value, setValue] = useState("")
   const [loading, setLoading] = useState(false)
 
+  const Timeout = 120
   const [chatHistory, setChatHistory] = useState([])
+
+  let data;
   //to clear the input field
   const clear = () => {
     setError(null)
     setValue('')
     setChatHistory([])
   }
+
 
 
   //options to select randomly from 
@@ -23,15 +26,15 @@ const App = () => {
     "What time is it today?",
     "What is the best coding language?",
     "What's your favorite hobby or pastime?",
-"If you could travel anywhere in the world right now, where would you go?",
-"What's the most interesting thing you've learned recently?",
-"Do you prefer reading books or watching movies?",
-"If you could have any superpower, what would it be and why?",
-"What's your go-to comfort food?",
-"If you could meet any historical figure, who would it be and what would you ask them?",
-"What's your favorite way to relax after a long day?",
-"What's the best piece of advice you've ever received?",
-"If you could switch lives with any fictional character for a day, who would it be and what would you do?"
+    "If you could travel anywhere in the world right now, where would you go?",
+    "What's the most interesting thing you've learned recently?",
+    "Do you prefer reading books or watching movies?",
+    "If you could have any superpower, what would it be and why?",
+    "What's your go-to comfort food?",
+    "If you could meet any historical figure, who would it be and what would you ask them?",
+    "What's your favorite way to relax after a long day?",
+    "What's the best piece of advice you've ever received?",
+    "If you could switch lives with any fictional character for a day, who would it be and what would you do?"
   ]
 
 
@@ -39,6 +42,44 @@ const App = () => {
     const randomValue = selectRandomOPtions[Math.floor(Math.random() * selectRandomOPtions.length)]
     setValue(randomValue)
   }
+
+  // to fetch the data from the gemini server
+  const fetchData = async () => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        history: chatHistory,
+        message: value
+      })
+    }
+
+    const response = await fetch("https://gemini-server-1kvg.onrender.com/gemini/send-response", options)
+    const result = await response.text()
+    return result
+
+  }
+
+
+
+  const fetchDataAndHandleTimeout = async () => {
+    try {
+      const result = await Promise.race([
+        fetchData(),
+        new Promise((resolve) => setTimeout(resolve, Timeout * 1000))
+      ]);
+      return result;
+    } catch (error) {
+      setError("Timeout, please check your internet connection");
+      setLoading(false);
+    }
+  }
+
+
+
+
 
   // use to send our query to the server`
   const getResponse = async () => {
@@ -50,29 +91,17 @@ const App = () => {
     try {
 
 
-      const options = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          history: chatHistory,
-          message: value
-        })
-      }
 
-      //loading while awaitind response 
+      //loading while awaiting response 
       setLoading(true)
       // its use to recieve messages from the server
+      data = await fetchDataAndHandleTimeout();
 
 
-      const response = await fetch("https://gemini-server-1kvg.onrender.com/gemini/send-response", options)
-      const data = await response.text()
-      console.log(data)
-     // Format bot response
-    
-      const formattedRes = data.split('\\n').map((part) => <p key={part}>{part}</p>); // Map each part to a <p> element
-     setChatHistory(oldChatHsitory =>
+      // Format bot response if needed (adjust this according to your response format)
+      const formattedRes = data.split('\\n').map((part, index) => <p key={index}>{part}</p>);
+
+      setChatHistory(oldChatHsitory =>
         [...oldChatHsitory, {
           role: "user",
           parts: value
@@ -83,7 +112,7 @@ const App = () => {
         }]
       )
 
-       setValue('')
+
       setLoading(false)
     } catch (error) {
       setLoading(false)
@@ -92,8 +121,10 @@ const App = () => {
     }
   }
 
-        const listenEnter = (e)=>{
-    if(e.key === "Enter") {
+
+
+  const listenEnter = (e) => {
+    if (e.key === "Enter") {
       getResponse()
     }
   }
@@ -104,13 +135,13 @@ const App = () => {
       <section className='app'>
         <p>
           what do you want to know?
-          <button className='suprise-me' onClick={selectRandomly} disabled={!chatHistory}> suprise me </button>
+          <button className='suprise-me' onClick={selectRandomly} disabled={!chatHistory || loading}> suprise me </button>
         </p>
 
 
 
         <div className='search-container'>
-          <input value={value} placeholder='What is todays weather?' onKeyDown={listenEnter}  onChange={e => setValue(e.target.value)}></input>
+          <input value={value} placeholder='What is todays weather?' onKeyDown={listenEnter} onChange={e => setValue(e.target.value)}></input>
           {!error && <button className='search-button' onClick={getResponse}>Search</button>}
           {error && <button className='search-button' onClick={clear}>clear</button>
           }
@@ -119,24 +150,29 @@ const App = () => {
         <p>{error}</p>
 
         <div className='search-result'>
-        {loading ?(<div className='Answer'>
-            <div class="d-flex justify-content-center">
-              <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
-              </div>
-            </div></div>)
-            :
-          (
-            
+          {
             chatHistory.map((chatItem, _index) => {
-            return <div className='Answer' key={_index}>
-              <p>
-            {chatItem.role} : {chatItem.parts}
-              </p>
-            </div>
+              return <div className='Answer' key={_index}>
+                <p>
+                  {chatItem.role} : {chatItem.parts}
+                </p>
+              </div>
 
-          }))}
-       
+            }
+
+            )
+          }
+
+          {loading && (
+            <div className='Answer'>
+              <div className="d-flex justify-content-center">
+                <div className="spinner-border" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       </section>
 
