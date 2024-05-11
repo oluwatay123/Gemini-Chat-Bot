@@ -112,7 +112,7 @@ const App = () => {
         }]
       )
 
-
+      setValue("")
       setLoading(false)
     } catch (error) {
       setLoading(false)
