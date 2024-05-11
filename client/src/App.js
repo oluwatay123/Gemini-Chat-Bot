@@ -106,7 +106,7 @@ const App = () => {
           parts: value
         },
         {
-          role: "model",
+          role: "Geminoid",
           parts: formattedRes
         }]
       )
